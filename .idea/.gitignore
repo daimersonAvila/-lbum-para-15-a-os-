@@ -1,10 +1,46 @@
-# Default ignored files
+# ==========================================
+# WebStorm / IntelliJ IDEA (Configuración local)
+# ==========================================
 /shelf/
 /workspace.xml
-# Ignored default folder with query files
 /queries/
-# Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
-# Editor-based HTTP Client requests
 /httpRequests/
+.idea/
+
+# ==========================================
+# ⚠️ VARIABLES DE ENTORNO (CRÍTICO PARA SEGURIDAD)
+# ==========================================
+# Aquí guardarás tu IMGBB_API_KEY para pruebas locales
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ==========================================
+# Node.js y Dependencias
+# ==========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==========================================
+# Webpack (Carpetas de compilación generadas)
+# ==========================================
+dist/
+build/
+.cache/
+
+# ==========================================
+# Vercel (Configuración local del CLI)
+# ==========================================
+.vercel
+
+# ==========================================
+# Sistema Operativo
+# ==========================================
+.DS_Store
+Thumbs.db
