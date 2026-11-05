@@ -12,20 +12,19 @@ const iconoCategoria = document.getElementById('iconoCategoria');
 
 let base64Image = null;
 let categoriaActual = "";
+let subiendo = false; // 🔒 CANDADO para evitar subidas dobles
 
 // 1. Seleccionar categoría
 window.seleccionarCategoria = function(categoria) {
   categoriaActual = categoria;
   tituloCategoria.textContent = `Foto: ${categoria}`;
 
-  // Cambiar el icono según la categoría
   if(categoria === 'Caballo') iconoCategoria.textContent = '🐎';
   else if(categoria === 'Pastel') iconoCategoria.textContent = '🎂';
   else if(categoria === 'Quinceañera') iconoCategoria.textContent = '👑';
   else if(categoria === 'Especiales') iconoCategoria.textContent = '✨';
   else iconoCategoria.textContent = '📸';
 
-  // Cambiar de pantalla
   menuCard.style.display = 'none';
   uploadCard.style.display = 'flex';
 }
@@ -37,12 +36,18 @@ window.volverAlMenu = function() {
   menuCard.style.display = 'flex';
 }
 
-// 3. Procesar imagen (Redimensionar para móvil)
+// 3. Procesar imagen
 function procesarImagen(file) {
+  if (!file) return;
+
   if (!file.type.startsWith('image/')) {
     mostrarEstado('Por favor, selecciona una imagen válida.', 'error');
     return;
   }
+
+  // Deshabilitar temporalmente para evitar doble procesamiento
+  fileInput.disabled = true;
+  cameraInput.disabled = true;
 
   const reader = new FileReader();
   reader.onload = function(event) {
@@ -65,30 +70,47 @@ function procesarImagen(file) {
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
 
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.85); // 85% de calidad
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
       base64Image = dataUrl.split(',')[1];
 
       imagePreview.src = dataUrl;
       previewContainer.style.display = 'block';
 
+      // Ocultamos los botones de selección para que no pueda elegir otra
       btnGroup.style.display = 'none';
       uploadBtn.style.display = 'flex';
+
+      // Volvemos a habilitar los inputs por si se arrepiente y da a "Volver"
+      fileInput.disabled = false;
+      cameraInput.disabled = false;
     };
     img.src = event.target.result;
   };
   reader.readAsDataURL(file);
 }
 
-fileInput.addEventListener('change', (e) => procesarImagen(e.target.files[0]));
-cameraInput.addEventListener('change', (e) => procesarImagen(e.target.files[0]));
+fileInput.addEventListener('change', (e) => {
+  procesarImagen(e.target.files[0]);
+  e.target.value = ''; // Limpiamos el input inmediatamente
+});
 
-// 4. Subir a la API enviando también la categoría
+cameraInput.addEventListener('change', (e) => {
+  procesarImagen(e.target.files[0]);
+  e.target.value = ''; // Limpiamos el input inmediatamente
+});
+
+// 4. Subir a la API (Con candado de seguridad)
 uploadBtn.addEventListener('click', async function() {
+  // 🔒 Si ya está subiendo, ignoramos el clic
+  if (subiendo) return;
+
   if (!base64Image) {
     mostrarEstado('Por favor, selecciona una foto primero.', 'error');
     return;
   }
 
+  // 🔒 Activamos el candado
+  subiendo = true;
   uploadBtn.disabled = true;
   uploadBtn.innerHTML = '<span>⏳</span> Subiendo...';
   ocultarEstado();
@@ -99,7 +121,7 @@ uploadBtn.addEventListener('click', async function() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         image: base64Image,
-        category: categoriaActual // Enviamos la categoría al backend
+        category: categoriaActual
       })
     });
 
@@ -107,14 +129,20 @@ uploadBtn.addEventListener('click', async function() {
 
     if (data.success) {
       mostrarEstado('¡Foto subida con éxito! Gracias.', 'success');
-      setTimeout(() => volverAlMenu(), 2500); // Volver al menú tras 2.5 seg
+      // Esperamos 2.5 segundos para que lean el mensaje y volvemos
+      setTimeout(() => {
+        subiendo = false; // 🔓 Liberamos el candado
+        volverAlMenu();
+      }, 2500);
     } else {
       mostrarEstado('Error al subir: ' + (data.error?.message || 'Intenta de nuevo.'), 'error');
       resetBoton();
+      subiendo = false; // 🔓 Liberamos el candado si falla
     }
   } catch (error) {
     mostrarEstado('Error de conexión. Revisa tu internet.', 'error');
     resetBoton();
+    subiendo = false; // 🔓 Liberamos el candado si falla
   }
 });
 
@@ -137,6 +165,7 @@ function resetFormulario() {
   cameraInput.value = '';
   base64Image = null;
   categoriaActual = "";
+  subiendo = false; // 🔓 Nos aseguramos de liberar el candado
   previewContainer.style.display = 'none';
   uploadBtn.style.display = 'none';
   btnGroup.style.display = 'flex';
