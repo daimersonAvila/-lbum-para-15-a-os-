@@ -485,3 +485,50 @@ html, body {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .petalo-ch { display: none; }
 }
+/* ── ZONA DE SUBIDA Y BOTONES ───────────────────────── */
+.btn-group {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.btn-select {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--oro2);
+  border: 1.5px solid var(--oro);
+  border-radius: 8px;
+  font-family: "Cinzel", serif;
+  font-size: clamp(.7rem, 3vw, .85rem);
+  font-weight: 700; text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1; /* Hace que ambos botones midan lo mismo */
+}
+
+.btn-select:hover {
+  background: rgba(212, 175, 55, 0.2);
+}
+
+/* Ajuste para que la imagen de vista previa no crezca demasiado */
+.preview-container {
+  display: none;
+  width: 100%;
+  max-width: 250px; /* Tamaño máximo en pantalla */
+  height: 250px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid var(--oro);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  margin: 0 auto 15px;
+}
+
+.preview-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Recorta la imagen sin deformarla */
+  display: block;
+}

@@ -1,36 +1,73 @@
-// js/app.js
 const fileInput = document.getElementById('fileInput');
+const cameraInput = document.getElementById('cameraInput');
 const previewContainer = document.getElementById('previewContainer');
 const imagePreview = document.getElementById('imagePreview');
 const uploadBtn = document.getElementById('uploadBtn');
-const selectBtn = document.getElementById('selectBtn');
+const btnGroup = document.getElementById('btnGroup');
 const statusMsg = document.getElementById('statusMsg');
 
-let base64Image = null; // Guardaremos la imagen aquí
+let base64Image = null;
 
-fileInput.addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
+// Función para procesar la imagen (Reducir tamaño para web, mantener calidad)
+function procesarImagen(file) {
   if (!file.type.startsWith('image/')) {
     mostrarEstado('Por favor, selecciona una imagen válida.', 'error');
     return;
   }
 
-  // Convertir a Base64 para enviarlo fácilmente a nuestra API
   const reader = new FileReader();
   reader.onload = function(event) {
-    base64Image = event.target.result.split(',')[1]; // Quitamos el encabezado "data:image/jpeg;base64,"
+    const img = new Image();
+    img.onload = function() {
+      // Creamos un canvas para redimensionar
+      const canvas = document.createElement('canvas');
+      const MAX_WIDTH = 1200; // Ancho máximo (buena calidad pero no pesa 10MB)
+      const MAX_HEIGHT = 1200;
+      let width = img.width;
+      let height = img.height;
 
-    imagePreview.src = event.target.result;
-    previewContainer.style.display = 'block';
-    uploadBtn.style.display = 'flex';
-    selectBtn.innerHTML = '<span>🔄</span> Cambiar Foto';
-    ocultarEstado();
+      // Calcular nuevas dimensiones manteniendo la proporción
+      if (width > height) {
+        if (width > MAX_WIDTH) {
+          height *= MAX_WIDTH / width;
+          width = MAX_WIDTH;
+        }
+      } else {
+        if (height > MAX_HEIGHT) {
+          width *= MAX_HEIGHT / height;
+          height = MAX_HEIGHT;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // Convertir a Base64 (calidad 0.8 = 80%, excelente balance)
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+      // Guardamos el base64 limpio para enviarlo a la API
+      base64Image = dataUrl.split(',')[1];
+
+      // Mostramos la vista previa
+      imagePreview.src = dataUrl;
+      previewContainer.style.display = 'block';
+
+      // Ocultar botones de selección y mostrar el de subir
+      btnGroup.style.display = 'none';
+      uploadBtn.style.display = 'flex';
+    };
+    img.src = event.target.result;
   };
   reader.readAsDataURL(file);
-});
+}
 
+// Escuchar ambos inputs (Galería y Cámara)
+fileInput.addEventListener('change', (e) => procesarImagen(e.target.files[0]));
+cameraInput.addEventListener('change', (e) => procesarImagen(e.target.files[0]));
+
+// Subir a la API
 uploadBtn.addEventListener('click', async function() {
   if (!base64Image) {
     mostrarEstado('Por favor, selecciona una foto primero.', 'error');
@@ -42,29 +79,22 @@ uploadBtn.addEventListener('click', async function() {
   ocultarEstado();
 
   try {
-    // LLAMAMOS A NUESTRA PROPIA API EN VERCEL (No a ImgBB directo)
     const response = await fetch('/api/upload', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ image: base64Image }) // Enviamos la imagen en JSON
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: base64Image })
     });
 
     const data = await response.json();
 
     if (data.success) {
       mostrarEstado('¡Foto subida con éxito! Gracias por compartir.', 'success');
-      setTimeout(() => {
-        resetFormulario();
-      }, 3000);
+      setTimeout(() => resetFormulario(), 3000);
     } else {
       mostrarEstado('Error al subir: ' + (data.error?.message || 'Intenta de nuevo.'), 'error');
       resetBoton();
     }
-
   } catch (error) {
-    console.error('Error de red:', error);
     mostrarEstado('Error de conexión. Revisa tu internet.', 'error');
     resetBoton();
   }
@@ -88,9 +118,10 @@ function resetBoton() {
 
 function resetFormulario() {
   fileInput.value = '';
+  cameraInput.value = '';
   base64Image = null;
   previewContainer.style.display = 'none';
   uploadBtn.style.display = 'none';
-  selectBtn.innerHTML = '<span>📁</span> Seleccionar Foto';
+  btnGroup.style.display = 'flex'; // Volver a mostrar los botones
   resetBoton();
 }
