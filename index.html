@@ -26,14 +26,23 @@
       <p class="personal-message-second" style="font-family: 'Lato'; font-size: 0.9rem; color: var(--rosa); margin-bottom: 15px;">
         Comparte tus mejores fotos con los novios y ayúdanos a crear un recuerdo inolvidable.
       </p>
-
       <div class="upload-zone">
-        <input type="file" id="fileInput" accept="image/*" />
+        <!-- Inputs ocultos (uno para galería, uno para cámara) -->
+        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        <!-- El atributo capture="environment" abre la cámara trasera directamente en móviles -->
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;">
 
-        <label for="fileInput" class="btn-select" id="selectBtn">
-          <span>📁</span> Seleccionar Foto
-        </label>
+        <!-- Botones personalizados -->
+        <div class="btn-group" id="btnGroup">
+          <label for="fileInput" class="btn-select">
+            <span>🖼️</span> Galería
+          </label>
+          <label for="cameraInput" class="btn-select">
+            <span>📸</span> Tomar Foto
+          </label>
+        </div>
 
+        <!-- Vista previa -->
         <div class="preview-container" id="previewContainer">
           <img id="imagePreview" src="" alt="Vista previa">
         </div>
@@ -44,7 +53,6 @@
 
         <div class="status-msg" id="statusMsg"></div>
       </div>
-    </div>
 
     <p class="small-note" style="color: rgba(249,229,150,.5); font-size: 0.75rem; margin-top: 10px;">
       Tus fotos se guardarán de forma segura.
