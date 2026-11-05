@@ -532,3 +532,52 @@ html, body {
   object-fit: cover; /* Recorta la imagen sin deformarla */
   display: block;
 }
+/* ── BOTONES DE CATEGORÍA (MENÚ) ────────────────────── */
+.categories-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.category-btn {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 50px; /* Bordes bien redondeados */
+  color: var(--oro2);
+  font-family: "Cinzel", serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.category-btn:hover {
+  background: rgba(212, 175, 55, 0.15);
+  transform: scale(1.02);
+}
+
+.cat-icon {
+  font-size: 1.4rem;
+  filter: drop-shadow(0 0 5px rgba(212,175,55,0.8));
+}
+
+/* ── BOTÓN VOLVER ───────────────────────────────────── */
+.btn-back {
+  background: transparent;
+  border: none;
+  color: var(--rosa);
+  font-family: "Lato", sans-serif;
+  font-size: 0.85rem;
+  margin-top: 15px;
+  cursor: pointer;
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+.btn-back:hover { opacity: 1; }
