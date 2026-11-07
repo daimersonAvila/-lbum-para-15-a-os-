@@ -29,19 +29,24 @@ function pintar() {
     fig.append(img);
     const cap = document.createElement('figcaption'); cap.textContent = f.cat; fig.append(cap);
     fig.addEventListener('click', () => abrir(f));
-    const puede = (admin && vista === 'todas') || (vista === 'mias' && f.token);
+    const puede = (admin && vista === 'todas') || vista === 'mias';
     if (puede) {
       const b = document.createElement('button'); b.className = 'del'; b.textContent = '🗑'; b.title = 'Eliminar foto';
       b.addEventListener('click', async (e) => {
         e.stopPropagation();
         if (!confirm('¿Eliminar esta foto del álbum?')) return;
+        let enAlbum = true;
         try {
-          const r = await fetch('/api/borrar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(vista === 'mias' ? { id: f.id, token: f.token } : { id: f.id, clave: admin }) });
-          if (!r.ok) { alert('No se pudo eliminar'); return; }
-        } catch (err) { alert('Sin conexión. Intenta de nuevo.'); return; }
-        todas = todas.filter((x) => x.id !== f.id);
+          const cuerpo = vista === 'mias' ? { id: f.id, token: f.token } : { id: f.id, clave: admin };
+          const r = await fetch('/api/borrar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) });
+          enAlbum = r.ok;
+        } catch (err) { enAlbum = false; }
+        if (vista === 'todas' && !enAlbum) { alert('No se pudo eliminar. Revisa tu clave y que la base de datos no esté pausada.'); return; }
+        // En "Mis fotos" siempre se quita de este celular, aunque el álbum compartido no responda
+        todas = todas.filter((x) => x.id !== f.id || !enAlbum);
         try { localStorage.setItem('misFotos', JSON.stringify(mias().filter((x) => x.id !== f.id))); } catch (err) {}
         pintar();
+        if (vista === 'mias' && !enAlbum) alert('La quité de tu lista. En el álbum compartido puede seguir si la base de datos estaba pausada.');
       });
       fig.append(b);
     }
