@@ -581,3 +581,41 @@ html, body {
 }
 
 .btn-back:hover { opacity: 1; }
+
+/* ── ÁLBUM / GALERÍA ────────────────────────────────── */
+.btn-album {
+  position: relative; z-index: 5; margin-top: 14px;
+  display: inline-block; padding: 11px 22px; border-radius: 50px;
+  border: 1px solid rgba(212,175,55,.6); color: var(--oro2); text-decoration: none;
+  font-family: "Cinzel", serif; font-size: .8rem; letter-spacing: 1px;
+  background: rgba(0,0,0,.35);
+}
+.gal-body { overflow-y: auto !important; overflow-x: hidden !important; height: 100dvh !important; }
+.gal { position: relative; z-index: 5; max-width: 1000px; margin: 0 auto; padding: 28px 14px 60px; text-align: center; }
+.gal .main-title { animation: none; font-size: clamp(2.4rem, 10vw, 3.6rem); }
+.gal-sub { color: var(--rosa); font-family: "Playfair Display", serif; font-style: italic; margin: 4px 0 16px; font-size: .95rem; }
+.gal-nav { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
+.gal-nav button, .gal-nav a {
+  padding: 8px 14px; border-radius: 50px; border: 1px solid rgba(212,175,55,.5);
+  background: rgba(0,0,0,.4); color: var(--oro2); font: 700 .72rem "Cinzel", serif;
+  letter-spacing: 1px; cursor: pointer; text-decoration: none;
+}
+.gal-nav .on { background: linear-gradient(135deg, var(--oro2), var(--oro)); color: var(--rojo); }
+.gal-count { color: rgba(249,229,150,.6); font-size: .78rem; margin: 10px 0 14px; }
+.gal-grid { columns: 2; column-gap: 8px; }
+@media (min-width: 640px) { .gal-grid { columns: 3; } }
+@media (min-width: 900px) { .gal-grid { columns: 4; } }
+.gal-grid figure { break-inside: avoid; margin: 0 0 8px; position: relative; border: 1px solid rgba(212,175,55,.45); border-radius: 6px; overflow: hidden; background: rgba(0,0,0,.4); cursor: zoom-in; }
+.gal-grid img { width: 100%; display: block; }
+.gal-grid figcaption { position: absolute; left: 6px; bottom: 6px; font-size: .62rem; padding: 2px 8px; border-radius: 20px; background: rgba(0,0,0,.65); color: var(--oro2); }
+.gal-grid .del { position: absolute; top: 6px; right: 6px; border: 0; border-radius: 50%; width: 28px; height: 28px; background: #b30000; color: #fff; cursor: pointer; }
+.gal-vacio { color: var(--crema); opacity: .85; padding: 40px 10px; font-family: "Playfair Display", serif; font-style: italic; }
+.gal-aviso { margin: 10px auto; max-width: 520px; padding: 10px 14px; border: 1px dashed var(--oro); border-radius: 8px; color: var(--oro2); font-size: .8rem; }
+.lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(10,0,2,.94); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 12px; padding: 16px; }
+.lightbox.on { display: flex; }
+.lightbox img { max-width: 100%; max-height: 80vh; border: 1px solid var(--oro); border-radius: 4px; }
+.lightbox .lb-bar { display: flex; gap: 10px; }
+.lightbox .lb-bar a, .lightbox .lb-bar button { padding: 9px 18px; border-radius: 50px; border: 1px solid var(--oro); background: rgba(0,0,0,.5); color: var(--oro2); font: 700 .75rem "Cinzel", serif; text-decoration: none; cursor: pointer; }
+.qr-box { background: #fff; padding: 14px; border-radius: 10px; display: inline-block; box-shadow: 0 0 40px rgba(212,175,55,.5); }
+.qr-box canvas { display: block; width: min(70vw, 300px); height: auto; image-rendering: pixelated; }
+@media print { .no-print { display: none !important; } .gal-body { background: #fff; } }

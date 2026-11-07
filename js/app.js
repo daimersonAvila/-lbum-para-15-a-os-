@@ -128,6 +128,7 @@ uploadBtn.addEventListener('click', async function() {
     const data = await response.json();
 
     if (data.success) {
+      guardarMia(data.foto);
       mostrarEstado('¡Foto subida con éxito! Gracias.', 'success');
       // Esperamos 2.5 segundos para que lean el mensaje y volvemos
       setTimeout(() => {
@@ -171,4 +172,14 @@ function resetFormulario() {
   btnGroup.style.display = 'flex';
   resetBoton();
   ocultarEstado();
+}
+
+// Guarda en este celular las fotos que subió la persona ("Mis fotos")
+function guardarMia(foto) {
+  if (!foto) return;
+  try {
+    const mias = JSON.parse(localStorage.getItem('misFotos') || '[]');
+    mias.unshift(foto);
+    localStorage.setItem('misFotos', JSON.stringify(mias.slice(0, 300)));
+  } catch (e) { /* sin almacenamiento: no pasa nada */ }
 }
