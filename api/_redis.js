@@ -5,7 +5,8 @@ const conf = () => ({
   token: process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN,
 });
 
-export const configurado = () => { const c = conf(); return !!(c.url && c.token); };
+// PAUSAR_BD=1 apaga la base de datos (útil para hacer pruebas sin gastar comandos)
+export const configurado = () => { if (process.env.PAUSAR_BD === '1') return false; const c = conf(); return !!(c.url && c.token); };
 
 export async function cmd(...args) {
   const { url, token } = conf();
