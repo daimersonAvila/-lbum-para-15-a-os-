@@ -1,0 +1,15 @@
+ÁLBUM COMPARTIDO — PASOS (una sola vez)
+
+1) Sube este proyecto a GitHub (git add . / commit / push). Vercel lo despliega solo.
+2) En Vercel > tu proyecto > Storage (o Marketplace) > "Upstash Redis" > Create (plan gratis) > Connect to Project.
+   Vercel crea solo las variables UPSTASH_REDIS_REST_URL / TOKEN (o KV_REST_API_*).
+3) Settings > Environment Variables: confirma IMGBB_API_KEY. (Opcional) ADMIN_KEY = una clave tuya para moderar.
+4) Deployments > Redeploy (las variables nuevas solo aplican en un deploy nuevo).
+
+USO
+- index.html : los invitados suben fotos (como ya lo tenías).
+- galeria.html : álbum de TODOS (filtros por categoría, pestaña "Mis fotos", se actualiza cada 30 s).
+- cartel.html : abre esta página en tu dominio corto de Vercel, descarga/imprime el QR (apunta a tu dominio).
+- Moderar: galeria.html?admin=TU_ADMIN_KEY muestra un botón 🗑 para quitar fotos de la galería.
+
+NOTA: si desactivas "Vercel Authentication" (Deployment Protection) los invitados podrán entrar sin cuenta.

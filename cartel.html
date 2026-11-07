@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Cartel QR · Mis 15 Años</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Great+Vibes&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="gal-body bg-dark-red">
+  <main class="gal">
+    <h1 class="main-title">Mis 15 Años</h1>
+    <p class="gal-sub">Escanea el código y comparte tus mejores fotos</p>
+    <div class="qr-box"><canvas id="qr"></canvas></div>
+    <p class="gal-sub" id="enlace" style="margin-top:14px"></p>
+    <div class="gal-nav no-print">
+      <button id="png">⬇ Descargar QR (PNG)</button>
+      <button onclick="print()">🖨 Imprimir</button>
+    </div>
+  </main>
+  <script src="js/vendor/qrcode.js"></script>
+  <script>
+    const url = location.origin + '/';
+    const qr = qrcode(0, 'M'); qr.addData(url); qr.make();
+    const n = qr.getModuleCount(), esc = 12, q = 4, c = document.getElementById('qr');
+    c.width = c.height = (n + q * 2) * esc;
+    const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#3a0010';
+    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (qr.isDark(r, k)) x.fillRect((k + q) * esc, (r + q) * esc, esc, esc);
+    document.getElementById('enlace').textContent = url.replace(/^https?:\/\//, '');
+    document.getElementById('png').onclick = () => { const a = document.createElement('a'); a.download = 'qr-album.png'; a.href = c.toDataURL('image/png'); a.click(); };
+  </script>
+</body>
+</html>

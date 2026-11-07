@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Álbum · Mis 15 Años</title>
+  <meta name="theme-color" content="#3a0010">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Great+Vibes&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="gal-body bg-dark-red">
+  <main class="gal">
+    <h1 class="main-title">Nuestro Álbum</h1>
+    <p class="gal-sub">Todos los recuerdos de la fiesta, en un solo lugar</p>
+
+    <div class="gal-nav" id="tabs">
+      <button data-v="todas" class="on">Todas</button>
+      <button data-v="mias">Mis fotos</button>
+    </div>
+    <div class="gal-nav" id="cats">
+      <button data-c="" class="on">Todas</button>
+      <button data-c="Caballo">🐎 Caballo</button>
+      <button data-c="Pastel">🎂 Pastel</button>
+      <button data-c="Quinceañera">👑 Quinceañera</button>
+      <button data-c="Especiales">✨ Especiales</button>
+      <button data-c="Otros">📸 Otras</button>
+    </div>
+    <div class="gal-nav"><a href="index.html">☁️ Subir una foto</a></div>
+
+    <p class="gal-count" id="cuenta"></p>
+    <div id="aviso"></div>
+    <div class="gal-grid" id="grid"></div>
+    <p class="gal-vacio" id="vacio" style="display:none"></p>
+  </main>
+
+  <div class="lightbox" id="lb">
+    <img id="lbImg" alt="">
+    <div class="lb-bar">
+      <a id="lbDown" target="_blank" rel="noopener" download>⬇ Guardar</a>
+      <button id="lbCerrar">✕ Cerrar</button>
+    </div>
+  </div>
+  <script src="js/galeria.js"></script>
+</body>
+</html>
