@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   if (!configurado()) return res.status(200).json({ configurado: false, fotos: [] });
   try {
     const filas = await cmd('LRANGE', LISTA, 0, 499);
-    const fotos = (filas || []).map((f) => { try { return JSON.parse(f); } catch { return null; } }).filter(Boolean);
+    const fotos = (filas || []).map((f) => { try { return JSON.parse(f); } catch { return null; } }).filter(Boolean).map(({ h, ...pub }) => pub);
     return res.status(200).json({ configurado: true, fotos });
   } catch (e) {
     console.error(e);

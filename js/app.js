@@ -1,3 +1,8 @@
+// Evita que el script se ejecute dos veces (index.html + webpack lo cargan ambos)
+(function () {
+if (window.__albumIniciado) return;
+window.__albumIniciado = true;
+
 const fileInput = document.getElementById('fileInput');
 const cameraInput = document.getElementById('cameraInput');
 const previewContainer = document.getElementById('previewContainer');
@@ -183,3 +188,5 @@ function guardarMia(foto) {
     localStorage.setItem('misFotos', JSON.stringify(mias.slice(0, 300)));
   } catch (e) { /* sin almacenamiento: no pasa nada */ }
 }
+
+})();

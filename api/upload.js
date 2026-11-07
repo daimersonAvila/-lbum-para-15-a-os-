@@ -1,3 +1,4 @@
+import { randomBytes, createHash } from 'node:crypto';
 import { configurado, cmd, LISTA } from './_redis.js';
 
 const CATEGORIAS = ['Caballo', 'Pastel', 'Quinceañera', 'Especiales', 'Otros'];
@@ -43,15 +44,19 @@ export default async function handler(req, res) {
       url: d.display_url || d.url,
       medio: (d.medium && d.medium.url) || d.display_url || d.url,
       mini: (d.thumb && d.thumb.url) || d.display_url || d.url,
-      cat: CATEGORIAS.includes(category) ? category : 'Otros',
+      cat: CATEGORIAS.find((c) => c.normalize('NFC').toLowerCase() === String(category || '').normalize('NFC').trim().toLowerCase()) || 'Otros',
       ts: timestamp,
     };
+
+    // Clave secreta para que quien subió la foto pueda borrarla: solo se guarda su huella
+    const token = randomBytes(16).toString('hex');
+    const registro = { ...foto, h: createHash('sha256').update(token).digest('hex') };
 
     // Guardamos en la base para la galería compartida
     let guardada = false;
     if (configurado()) {
       try {
-        await cmd('LPUSH', LISTA, JSON.stringify(foto));
+        await cmd('LPUSH', LISTA, JSON.stringify(registro));
         await cmd('LTRIM', LISTA, 0, 1999);
         guardada = true;
       } catch (e) {
@@ -59,7 +64,7 @@ export default async function handler(req, res) {
       }
     }
 
-    return res.status(200).json({ success: true, foto, guardada });
+    return res.status(200).json({ success: true, foto: { ...foto, token }, guardada });
   } catch (error) {
     console.error('Error de ImgBB:', error);
     return res.status(500).json({ error: 'Error interno al subir la imagen' });

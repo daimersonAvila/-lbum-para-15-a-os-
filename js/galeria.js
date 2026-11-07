@@ -29,13 +29,19 @@ function pintar() {
     fig.append(img);
     const cap = document.createElement('figcaption'); cap.textContent = f.cat; fig.append(cap);
     fig.addEventListener('click', () => abrir(f));
-    if (admin && vista === 'todas') {
-      const b = document.createElement('button'); b.className = 'del'; b.textContent = '🗑'; b.title = 'Quitar de la galería';
+    const puede = (admin && vista === 'todas') || (vista === 'mias' && f.token);
+    if (puede) {
+      const b = document.createElement('button'); b.className = 'del'; b.textContent = '🗑'; b.title = 'Eliminar foto';
       b.addEventListener('click', async (e) => {
         e.stopPropagation();
-        if (!confirm('¿Quitar esta foto de la galería?')) return;
-        const r = await fetch('/api/borrar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: f.id, clave: admin }) });
-        if (r.ok) { todas = todas.filter((x) => x.id !== f.id); pintar(); } else alert('Clave incorrecta');
+        if (!confirm('¿Eliminar esta foto del álbum?')) return;
+        try {
+          const r = await fetch('/api/borrar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(vista === 'mias' ? { id: f.id, token: f.token } : { id: f.id, clave: admin }) });
+          if (!r.ok) { alert('No se pudo eliminar'); return; }
+        } catch (err) { alert('Sin conexión. Intenta de nuevo.'); return; }
+        todas = todas.filter((x) => x.id !== f.id);
+        try { localStorage.setItem('misFotos', JSON.stringify(mias().filter((x) => x.id !== f.id))); } catch (err) {}
+        pintar();
       });
       fig.append(b);
     }
