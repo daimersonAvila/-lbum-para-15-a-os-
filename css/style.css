@@ -619,3 +619,27 @@ html, body {
 .qr-box { background: #fff; padding: 14px; border-radius: 10px; display: inline-block; box-shadow: 0 0 40px rgba(212,175,55,.5); }
 .qr-box canvas { display: block; width: min(70vw, 300px); height: auto; image-rendering: pixelated; }
 @media print { .no-print { display: none !important; } .gal-body { background: #fff; } }
+
+/* ── VARIAS FOTOS (vista previa en cuadrícula) ──────── */
+.preview-container.multi {
+  display: none; height: auto; max-height: 270px; max-width: 100%; width: 100%;
+  overflow-y: auto; border: 0; box-shadow: none;
+  grid-template-columns: repeat(3, 1fr); gap: 6px;
+}
+.preview-container.multi img { aspect-ratio: 1; height: auto; border: 1px solid var(--oro); border-radius: 6px; }
+
+/* ── BOTÓN SUBIR Y MENSAJES ─────────────────────────── */
+.upload-zone { width: 100%; display: flex; flex-direction: column; align-items: center; }
+.camera-icon { font-size: 1.8rem; filter: drop-shadow(0 0 8px rgba(212,175,55,.8)); }
+.btn-upload {
+  display: none; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 14px 20px; margin-top: 4px; cursor: pointer;
+  border: 1.5px solid var(--oro2); border-radius: 50px;
+  background: linear-gradient(135deg, var(--oro2), var(--oro)); color: var(--rojo);
+  font-family: "Cinzel", serif; font-size: .9rem; font-weight: 700; letter-spacing: 1px;
+  box-shadow: 0 6px 22px rgba(212,175,55,.35);
+}
+.btn-upload:disabled { opacity: .7; cursor: wait; }
+.status-msg { display: none; margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: .85rem; line-height: 1.4; max-width: 100%; }
+.status-success { background: rgba(46,160,90,.18); border: 1px solid rgba(46,204,113,.6); color: #c8ffd9; }
+.status-error { background: rgba(179,0,0,.25); border: 1px solid rgba(255,120,120,.6); color: #ffd1d1; }
