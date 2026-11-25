@@ -643,3 +643,12 @@ html, body {
 .status-msg { display: none; margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: .85rem; line-height: 1.4; max-width: 100%; }
 .status-success { background: rgba(46,160,90,.18); border: 1px solid rgba(46,204,113,.6); color: #c8ffd9; }
 .status-error { background: rgba(179,0,0,.25); border: 1px solid rgba(255,120,120,.6); color: #ffd1d1; }
+
+/* ── BOTÓN DESCARGAR ────────────────────────────────── */
+.gal-grid .dl {
+  position: absolute; right: 6px; bottom: 6px; width: 34px; height: 34px;
+  border: 1px solid var(--oro); border-radius: 50%; cursor: pointer;
+  background: rgba(26,3,3,.78); color: var(--oro2); font-size: 1rem; line-height: 1;
+  display: grid; place-items: center;
+}
+.gal-grid .dl:disabled { opacity: .8; cursor: wait; }

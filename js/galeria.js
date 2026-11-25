@@ -29,6 +29,9 @@ function pintar() {
     fig.append(img);
     const cap = document.createElement('figcaption'); cap.textContent = f.cat; fig.append(cap);
     fig.addEventListener('click', () => abrir(f));
+    const dl = document.createElement('button'); dl.className = 'dl'; dl.textContent = '⬇'; dl.title = 'Descargar foto'; dl.setAttribute('aria-label', 'Descargar foto');
+    dl.addEventListener('click', (e) => { e.stopPropagation(); descargar(f, dl); });
+    fig.append(dl);
     const puede = (admin && vista === 'todas') || vista === 'mias';
     if (puede) {
       const b = document.createElement('button'); b.className = 'del'; b.textContent = '🗑'; b.title = 'Eliminar foto';
@@ -54,7 +57,42 @@ function pintar() {
   });
 }
 
-function abrir(f) { $('lbImg').src = f.url; $('lbDown').href = f.url; $('lb').classList.add('on'); }
+// Descarga la foto directo a la carpeta de Descargas (sin abrir otra pestaña)
+function nombreArchivo(f) {
+  const ext = ((f.url || '').match(/\.(jpe?g|png|webp|gif)(\?|$)/i) || [, 'jpg'])[1].toLowerCase();
+  const cat = String(f.cat || 'foto').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]/g, '');
+  return `keidy-${cat}-${String(f.id || Date.now()).replace(/[^a-zA-Z0-9]/g, '')}.${ext}`;
+}
+async function traerBlob(f) {
+  try {
+    const r = await fetch(f.url, { mode: 'cors' });   // directo desde ImgBB
+    if (r.ok) return await r.blob();
+  } catch (e) { /* ImgBB no permite leerla desde el navegador: se usa el servidor */ }
+  const r2 = await fetch('/api/descargar?url=' + encodeURIComponent(f.url) + '&name=' + encodeURIComponent(nombreArchivo(f)));
+  if (!r2.ok) throw new Error('descarga');
+  return await r2.blob();
+}
+async function descargar(f, btn) {
+  const antes = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+  try {
+    const blob = await traerBlob(f);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = nombreArchivo(f);
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    if (btn) btn.textContent = '✓';
+  } catch (e) {
+    alert('No se pudo descargar la foto. Revisa tu internet e intenta de nuevo.');
+    if (btn) btn.textContent = antes;
+  }
+  if (btn) setTimeout(() => { btn.disabled = false; btn.textContent = antes; }, 1500);
+}
+
+let actual = null;
+function abrir(f) { actual = f; $('lbImg').src = f.url; $('lb').classList.add('on'); }
+$('lbDown').addEventListener('click', (e) => { e.preventDefault(); if (actual) descargar(actual, $('lbDown')); });
 $('lbCerrar').onclick = () => $('lb').classList.remove('on');
 $('lb').addEventListener('click', (e) => { if (e.target === $('lb')) $('lb').classList.remove('on'); });
 addEventListener('keydown', (e) => { if (e.key === 'Escape') $('lb').classList.remove('on'); });
