@@ -22,7 +22,7 @@ const PARALELO = 2;     // subidas al mismo tiempo
 
 const ICONOS = {
   Caballo: '🐎', Mariachis: '🎺', Zapatillas: '👠', Vals: '💃', Velas: '🕯️', Pastel: '🎂',
-  'Fonomímica': '🎭', 'Pólvora': '🎆', 'Quinceañera': '👑', Especiales: '✨'
+  'Fonomímica': '🎭', 'Quinceañera': '👑', Especiales: '✨'
 };
 let cola = [];          // [{ dataUrl, base64 }]
 let categoriaActual = '';

@@ -1,7 +1,7 @@
 import { randomBytes, createHash } from 'node:crypto';
 import { configurado, cmd, LISTA } from './_redis.js';
 
-const CATEGORIAS = ['Caballo', 'Mariachis', 'Zapatillas', 'Vals', 'Velas', 'Pastel', 'Fonomímica', 'Pólvora', 'Quinceañera', 'Especiales', 'Otros'];
+const CATEGORIAS = ['Caballo', 'Mariachis', 'Zapatillas', 'Vals', 'Velas', 'Pastel', 'Fonomímica', 'Quinceañera', 'Especiales', 'Otros'];
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
