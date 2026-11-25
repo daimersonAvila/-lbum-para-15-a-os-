@@ -13,22 +13,76 @@
     <h1 class="main-title">Mis 15 Años</h1>
     <p class="gal-sub">Escanea el código y comparte tus mejores fotos</p>
     <div class="qr-box"><canvas id="qr"></canvas></div>
+
+    <div class="qr-url no-print">
+      <label for="url">Enlace que abrirá el QR</label>
+      <input id="url" type="url" inputmode="url" autocomplete="off" spellcheck="false">
+      <div class="gal-nav">
+        <button data-dest="">☁️ Subir fotos</button>
+        <button data-dest="galeria.html">🖼️ Ver álbum</button>
+      </div>
+      <p id="aviso" class="gal-aviso" style="display:none"></p>
+    </div>
+
     <p class="gal-sub" id="enlace" style="margin-top:14px"></p>
     <div class="gal-nav no-print">
       <button id="png">⬇ Descargar QR (PNG)</button>
+      <button id="svg">⬇ Descargar QR (SVG)</button>
       <button onclick="print()">🖨 Imprimir</button>
     </div>
+    <p class="gal-count no-print">Imprímelo sobre fondo blanco, de al menos 5 x 5 cm, y pruébalo con tu celular antes de repartirlo.</p>
   </main>
   <script src="js/vendor/qrcode.js"></script>
   <script>
-    const url = location.origin + '/';
-    const qr = qrcode(0, 'M'); qr.addData(url); qr.make();
-    const n = qr.getModuleCount(), esc = 12, q = 4, c = document.getElementById('qr');
-    c.width = c.height = (n + q * 2) * esc;
-    const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#3a0010';
-    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (qr.isDark(r, k)) x.fillRect((k + q) * esc, (r + q) * esc, esc, esc);
-    document.getElementById('enlace').textContent = url.replace(/^https?:\/\//, '');
-    document.getElementById('png').onclick = () => { const a = document.createElement('a'); a.download = 'qr-album.png'; a.href = c.toDataURL('image/png'); a.click(); };
+    const Q = 6;                                   // margen blanco (en módulos); el mínimo estándar es 4
+    const $ = (id) => document.getElementById(id);
+    const origen = location.origin + '/';
+    $('url').value = origen;
+    let modulos = null;
+
+    function generar() {
+      const url = $('url').value.trim();
+      // Aviso si es la dirección larga de un despliegue (está protegida y pide login)
+      const larga = /^[^.]+-[a-z0-9]{8,10}-[^.]+\.vercel\.app$/i.test((() => { try { return new URL(url).hostname; } catch (e) { return ''; } })());
+      $('aviso').style.display = larga ? 'block' : 'none';
+      $('aviso').textContent = 'Este enlace parece la dirección larga de un despliegue y puede pedir inicio de sesión. Usa tu dominio corto (por ejemplo album-para-15.vercel.app).';
+      if (!url) { modulos = null; $('qr').width = $('qr').height = 10; $('enlace').textContent = ''; return; }
+      const qr = qrcode(0, 'Q');                   // corrección de errores nivel Q
+      qr.addData(url); qr.make();
+      const n = qr.getModuleCount();
+      modulos = { n, oscuro: (r, c) => qr.isDark(r, c) };
+      pintar($('qr'), Math.max(8, Math.floor(900 / (n + 2 * Q))));
+      $('enlace').textContent = url.replace(/^https?:\/\//, '');
+    }
+
+    function pintar(canvas, px) {
+      const { n, oscuro } = modulos, total = (n + 2 * Q) * px;
+      canvas.width = canvas.height = total;
+      const x = canvas.getContext('2d');
+      x.fillStyle = '#ffffff'; x.fillRect(0, 0, total, total);
+      x.fillStyle = '#000000';                     // negro puro: máximo contraste
+      for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (oscuro(r, c)) x.fillRect((c + Q) * px, (r + Q) * px, px, px);
+    }
+
+    function bajar(href, nombre) { const a = document.createElement('a'); a.href = href; a.download = nombre; document.body.appendChild(a); a.click(); a.remove(); }
+
+    $('png').onclick = () => {                     // PNG grande (≈2400 px) para imprimir
+      if (!modulos) return;
+      const c = document.createElement('canvas');
+      pintar(c, Math.max(8, Math.floor(2400 / (modulos.n + 2 * Q))));
+      bajar(c.toDataURL('image/png'), 'qr-album.png');
+    };
+    $('svg').onclick = () => {                     // SVG: se puede ampliar sin perder nitidez
+      if (!modulos) return;
+      const t = modulos.n + 2 * Q; let d = '';
+      for (let r = 0; r < modulos.n; r++) for (let c = 0; c < modulos.n; c++) if (modulos.oscuro(r, c)) d += `M${c + Q} ${r + Q}h1v1h-1z`;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${t} ${t}" width="1000" height="1000" shape-rendering="crispEdges"><rect width="${t}" height="${t}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+      const u = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+      bajar(u, 'qr-album.svg'); setTimeout(() => URL.revokeObjectURL(u), 4000);
+    };
+    document.querySelectorAll('[data-dest]').forEach((b) => b.addEventListener('click', () => { $('url').value = origen + b.dataset.dest; generar(); }));
+    $('url').addEventListener('input', generar);
+    generar();
   </script>
 </body>
 </html>
