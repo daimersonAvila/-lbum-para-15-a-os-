@@ -20,7 +20,10 @@ const LADO = 1280;      // lado mayor en píxeles
 const CALIDAD = 0.82;
 const PARALELO = 2;     // subidas al mismo tiempo
 
-const ICONOS = { Caballo: '🐎', Pastel: '🎂', 'Quinceañera': '👑', Especiales: '✨' };
+const ICONOS = {
+  Caballo: '🐎', Mariachis: '🎺', Zapatillas: '👠', Vals: '💃', Velas: '🕯️', Pastel: '🎂',
+  'Fonomímica': '🎭', 'Pólvora': '🎆', 'Quinceañera': '👑', Especiales: '✨'
+};
 let cola = [];          // [{ dataUrl, base64 }]
 let categoriaActual = '';
 let subiendo = false;   // 🔒 candado contra subidas dobles

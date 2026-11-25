@@ -13,3 +13,8 @@ USO
 - Moderar: galeria.html?admin=TU_ADMIN_KEY muestra un botón 🗑 para quitar fotos de la galería.
 
 NOTA: si desactivas "Vercel Authentication" (Deployment Protection) los invitados podrán entrar sin cuenta.
+
+MOMENTOS DEL ÁLBUM (según el protocolo)
+Caballo, Mariachis, Zapatillas y Tiara, Vals, Las 15 Velas, Pastel, Fonomímica, Pólvora, Quinceañera, Fotos Especiales, Otras.
+Para cambiar o quitar alguno, edita las 4 partes: index.html (botones), js/app.js (ICONOS), api/upload.js (CATEGORIAS) y galeria.html (filtros).
+Las fotos ya subidas conservan su categoría anterior.
